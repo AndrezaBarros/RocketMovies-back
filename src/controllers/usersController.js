@@ -25,15 +25,13 @@ class UsersController {
         const { name, email, password, oldPassword } = request.body;
         const user_id = request.user.id;
 
-        const database = await sqliteConnection();
-
-        const user = await database.get('SELECT * FROM users WHERE id = (?)', [user_id]);
+        const user = await knex("users").where("id", user_id);
 
         if(!user) {
             throw new AppError("Usuário não encontrado");
         }
 
-        const userWithUpdatedEmail = await database.get('SELECT * FROM users WHERE email = (?)', [email]);
+        const userWithUpdatedEmail = await knex("users").where("email", email);
 
         if(userWithUpdatedEmail && userWithUpdatedEmail.id !== user.id) {
             throw new AppError("Este e-mail já está em uso")
@@ -55,16 +53,13 @@ class UsersController {
 
             user.password = await hash(password, 8);
         }
-
-        await database.run(`
-            UPDATE users SET
-            name = ?,
-            email = ?,
-            password = ?,
-            updated_at = DATETIME("now")
-            WHERE id = ?`,
-            [user.name, user.email, user.password, user_id]
-        );
+        
+        await knex("users").where("id", user_id).update({
+            name,
+            email,
+            password,
+            updated_at: new Date()
+        });
 
         return response.json();
     }
