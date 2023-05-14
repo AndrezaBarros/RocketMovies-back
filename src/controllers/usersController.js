@@ -6,18 +6,18 @@ class UsersController {
     async create(request, response) {
         const { name, email, password } = request.body;
 
-        const checkUserExists = await knex("users").select("email").where("email", String(email));
+        const checkUserExists = await knex("users").where("email", email);
 
-        if(checkUserExists) {
+        if(checkUserExists.length > 0) {
             throw new AppError("Este e-mail já está em uso");
         }
 
         const hashedPassword = await hash(password, 8);
 
-        await connectionKnex.insert({
-            name,
-            email,
-            hashedPassword
+        await knex("users").insert({
+            name: name,
+            email: email,
+            password: hashedPassword
         });
     }
 
@@ -60,7 +60,7 @@ class UsersController {
             name,
             email,
             password,
-            updated_at: new Date()
+            updated_at: new Date().toIsString()
         });
 
         return response.json();

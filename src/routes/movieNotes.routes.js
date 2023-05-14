@@ -7,12 +7,10 @@ const movieNotesRoutes = Router();
 
 const movieNotesController = new MovieNotesController()
 
-movieNotesRoutes.use(ensureAuthenticated);
-
-movieNotesRoutes.post("/", movieNotesController.create); 
-movieNotesRoutes.get("/:id", movieNotesController.show); 
-movieNotesRoutes.delete("/:id", movieNotesController.delete); 
-movieNotesRoutes.get("/", movieNotesController.index); 
+movieNotesRoutes.post("/", ensureAuthenticated ,movieNotesController.create); 
+movieNotesRoutes.get("/:id", ensureAuthenticated, movieNotesController.show); 
+movieNotesRoutes.delete("/:id", ensureAuthenticated, movieNotesController.delete); 
+movieNotesRoutes.get("/", ensureAuthenticated, movieNotesController.index); 
 
 
 module.exports = movieNotesRoutes;
