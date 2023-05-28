@@ -27,15 +27,11 @@ class MovieNotesController {
     }
 
     async show(request, response) {
-        const { title } = request.query;
+        const { id } = request.params;
 
-        const note = await knex("movie_notes")
-            .whereLike("title", `%${title}%`)
-            .first();
+        const movie = await knex("movie_notes").where({ id }).first();
 
-        return response.json({
-            ...note,
-        });
+        return response.json(movie);
     }
 
     async delete(request, response) {
@@ -47,11 +43,18 @@ class MovieNotesController {
     }
 
     async index(request, response) {
-        const { title, tags } = request.query;
+        const { title } = request.query;
         const user_id = request.user.id;
 
-        let movies = await knex("movie_notes")
-            .where("user_id", user_id);
+        let movies = [];
+
+        if (title != undefined) {
+            movies = await knex("movie_notes")
+                .where("user_id", user_id).whereLike("title", `%${title}%`);
+        } else {
+            movies = await knex("movie_notes")
+                .where("user_id", user_id);
+        }
 
         for (let i in movies) {
             let movie = movies[i];

@@ -65,6 +65,20 @@ class UsersController {
 
         return response.json();
     }
+
+    async show(request, response) {
+        const { user_id } = request.query;
+
+        const user = {}
+
+        if (user_id != undefined) {
+            user = await knex("users").where("id", user_id).first();
+        } else {
+            throw new AppError("Criador não encontrado")
+        }
+
+        return response.json(user);
+    }
 }
 
 module.exports = UsersController;
