@@ -31,6 +31,13 @@ class MovieNotesController {
 
         const movie = await knex("movie_notes").where({ id }).first();
 
+        movie.tags = await knex("movie_tags")
+            .where("note_id", movie.id);
+
+        movie.user = await knex("users")
+            .select("name")
+            .where("id", movie.user_id).first();
+
         return response.json(movie);
     }
 
