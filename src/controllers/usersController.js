@@ -7,8 +7,8 @@ class UsersController {
         const { name, email, password } = request.body;
 
         const checkUserExists = await knex("users").where("email", email);
-
-        if(checkUserExists.length > 0) {
+        
+        if(checkUserExists.length != 0) {
             throw new AppError("Este e-mail já está em uso");
         }
 
@@ -19,6 +19,8 @@ class UsersController {
             email: email,
             password: hashedPassword
         });
+
+        response.status(201).json();
     }
 
     async update(request, response) {
