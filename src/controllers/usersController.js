@@ -62,7 +62,7 @@ class UsersController {
             name,
             email,
             password,
-            updated_at: new Date().toIsString()
+            updated_at: new Date().toISOString()
         });
 
         return response.json();
